@@ -20,11 +20,16 @@ export function SearchingScreen({ onCancel, searchCount }: SearchingScreenProps)
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    document.body.classList.add("hide-mobile-nav");
+    return () => document.body.classList.remove("hide-mobile-nav");
+  }, []);
+
   const formattedTime = `00:${seconds.toString().padStart(2, "0")}`;
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-6 text-center screen-enter">
-      <div className="max-w-md w-full flex flex-col items-center space-y-12">
+    <div className="flex flex-1 flex-col items-center justify-center p-6 text-center screen-enter overflow-y-auto min-h-full py-8">
+      <div className="max-w-md w-full flex flex-col items-center space-y-8 my-auto">
         {/* Radar Animation */}
         <div className="relative flex items-center justify-center h-40 w-40">
           <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-radar-1" />

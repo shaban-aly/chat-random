@@ -87,7 +87,7 @@ export function useRooms(guestId: string) {
       
       router.push(`/rooms/${roomId}`);
     },
-    [profile, router]
+    [profile, router, guestId]
   );
 
   const handleJoinWithProfile = useCallback(
@@ -106,7 +106,7 @@ export function useRooms(guestId: string) {
         router.push(`/rooms/${targetRoom}`);
       }
     },
-    [saveProfile, pendingRoom, router]
+    [saveProfile, pendingRoom, router, guestId]
   );
 
   const leaveRoom = useCallback(() => {

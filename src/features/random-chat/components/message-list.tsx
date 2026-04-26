@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Message } from "../types";
+import { useEffect, useRef, ReactNode } from "react";
+import { UnifiedMessage } from "../types";
 import { MessageBubble } from "./message-bubble";
 import { Info, Lock } from "lucide-react";
 
 interface MessageListProps {
-  messages: Message[];
+  messages: UnifiedMessage[];
   guestId: string;
   notice?: string;
   isGuestTyping?: boolean;
+  emptyState?: ReactNode;
 }
 
-export function MessageList({ messages, guestId, notice, isGuestTyping }: MessageListProps) {
+export function MessageList({ messages, guestId, notice, isGuestTyping, emptyState }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export function MessageList({ messages, guestId, notice, isGuestTyping }: Messag
 
   return (
     <div
-      className="flex flex-1 min-h-0 flex-col gap-8 overflow-y-auto p-4 sm:p-10"
+      className="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto p-4 sm:p-6 pb-20"
       ref={scrollRef}
     >
       {notice && (
@@ -37,17 +38,19 @@ export function MessageList({ messages, guestId, notice, isGuestTyping }: Messag
       )}
 
       {messages.length === 0 && (
-        <div className="flex flex-1 flex-col items-center justify-center text-center p-8">
-          <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-primary/5 text-primary">
-            <Lock className="h-12 w-12 text-primary/30" />
+        emptyState || (
+          <div className="flex flex-1 flex-col items-center justify-center text-center p-8 mt-10">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/5 text-primary">
+              <Lock className="h-10 w-10 text-primary/30" />
+            </div>
+            <h3 className="text-xl font-black text-foreground">
+              المحادثة مشفرة وآمنة
+            </h3>
+            <p className="mt-2 text-sm font-medium text-muted-foreground max-w-[280px]">
+              أهلاً بك! ابدأ الحديث الآن بكل خصوصية.
+            </p>
           </div>
-          <h3 className="text-xl font-black text-foreground">
-            المحادثة مشفرة وآمنة
-          </h3>
-          <p className="mt-2 text-sm font-medium text-muted-foreground max-w-[280px]">
-            أهلاً بك! ابدأ الحديث الآن بكل خصوصية.
-          </p>
-        </div>
+        )
       )}
 
       {messages.map((message) => (
@@ -60,7 +63,7 @@ export function MessageList({ messages, guestId, notice, isGuestTyping }: Messag
 
       {isGuestTyping && (
         <div className="flex w-full justify-start">
-          <div className="group relative max-w-[85%] px-5 py-4 text-sm leading-relaxed sm:max-w-[70%] sm:text-base shadow-sm bubble-theirs">
+          <div className="group relative max-w-[90%] px-3.5 py-3 text-xs leading-relaxed sm:max-w-[75%] sm:text-sm shadow-sm bubble-theirs">
             <div className="flex items-center gap-1.5 h-6">
               <div className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }}></div>
               <div className="h-2 w-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }}></div>

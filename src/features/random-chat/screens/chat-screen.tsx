@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent } from "react";
-import { Message } from "../types";
+import { FormEvent, useEffect } from "react";
+import { UnifiedMessage } from "../types";
 import { ChatHeader } from "../components/chat-header";
 import { MessageList } from "../components/message-list";
 import { MessageInput } from "../components/message-input";
 
 interface ChatScreenProps {
   guestId: string;
-  messages: Message[];
+  messages: UnifiedMessage[];
   messageText: string;
   notice: string;
   onMessageChange: (text: string) => void;
@@ -29,6 +29,11 @@ export function ChatScreen({
   onSendAudio,
   onEndChat,
 }: ChatScreenProps) {
+  useEffect(() => {
+    document.body.classList.add("hide-mobile-nav");
+    return () => document.body.classList.remove("hide-mobile-nav");
+  }, []);
+
   return (
     <div className="flex h-full flex-col bg-background overflow-hidden relative screen-enter">
       <ChatHeader statusLabel="متصل الآن" onEndChat={onEndChat} />

@@ -162,3 +162,11 @@ input {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* Hide Mobile Nav Utility */
+body.hide-mobile-nav .mobile-nav-container {
+  display: none !important;
+}
+body.hide-mobile-nav main {
+  padding-bottom: 0 !important;
+}

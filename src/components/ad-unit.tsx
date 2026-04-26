@@ -17,8 +17,8 @@ export function AdUnit({ src, className = "" }: AdUnitProps) {
   const isLoaded = useRef(false);
 
   useEffect(() => {
-    // Prevent double injection in React Strict Mode
-    if (isLoaded.current || !containerRef.current) return;
+    const currentContainer = containerRef.current;
+    if (isLoaded.current || !currentContainer) return;
     
     isLoaded.current = true;
 
@@ -27,14 +27,14 @@ export function AdUnit({ src, className = "" }: AdUnitProps) {
     script.async = true;
     script.referrerPolicy = "no-referrer-when-downgrade";
     // We add an empty settings object to mimic the network's IIFE argument
-    (script as any).settings = {}; 
+    (script as HTMLScriptElement & { settings?: unknown }).settings = {}; 
 
-    containerRef.current.appendChild(script);
+    currentContainer.appendChild(script);
 
     return () => {
       // Optional cleanup if the ad network supports it, but usually we just leave it or let React unmount the container
-      if (containerRef.current && script.parentNode) {
-        // containerRef.current.removeChild(script);
+      if (currentContainer && script.parentNode) {
+        // currentContainer.removeChild(script);
       }
     };
   }, [src]);

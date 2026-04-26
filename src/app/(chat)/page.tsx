@@ -18,6 +18,7 @@ export default function RandomChatPage() {
 
   useEffect(() => {
     if (chat.status === "searching") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchCount((c) => c + 1);
     }
   }, [chat.status]);

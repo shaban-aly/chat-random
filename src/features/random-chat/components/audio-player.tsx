@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Play, Pause } from "lucide-react";
 
 interface AudioPlayerProps {
   src: string;

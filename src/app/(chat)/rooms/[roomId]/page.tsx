@@ -32,7 +32,6 @@ export default function RoomChatPage() {
         onSendAudio={rooms.sendRoomAudio}
         onLeaveRoom={rooms.leaveRoom}
         onPrivateChat={rooms.openPrivateChat}
-        profile={rooms.profile}
       />
 
       {rooms.pendingRoom && (

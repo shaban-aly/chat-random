@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Users, ChevronRight, AlertCircle } from "lucide-react";
-import { Profile, RoomMessage } from "../types";
+import { useState } from "react";
+import { Users, ChevronRight } from "lucide-react";
+import { RoomMessage, Profile } from "../types";
 import { MessageInput } from "../components/message-input";
+import { MessageList } from "../components/message-list";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { AudioPlayer } from "../components/audio-player";
 
 interface RoomScreenProps {
   roomId: string;
@@ -20,7 +20,6 @@ interface RoomScreenProps {
   onSendAudio?: (blob: Blob) => void;
   onLeaveRoom: () => void;
   onPrivateChat: (peer: Profile) => void;
-  profile?: Profile | null;
 }
 
 export function RoomScreen({
@@ -35,41 +34,8 @@ export function RoomScreen({
   onSendAudio,
   onLeaveRoom,
   onPrivateChat,
-  profile,
 }: RoomScreenProps) {
   const [isUsersOpen, setIsUsersOpen] = useState(false);
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
-  const renderMessageContent = (msg: RoomMessage) => {
-    if (msg.message_type === "audio" && msg.media_url) {
-      return <AudioPlayer src={msg.media_url} />;
-    }
-    
-    const content = msg.body;
-    const parts = content.split(/(@[^\s@]+)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("@")) {
-        return (
-          <span key={i} className="font-bold text-primary dark:text-primary-foreground underline decoration-primary/30 underline-offset-2">
-            {part}
-          </span>
-        );
-      }
-      return part;
-    });
-  };
-
-  // ... (auto-scroll useEffect)
-
-  // Auto-scroll to bottom on new messages
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [messages.length]);
 
   return (
     <div className="flex h-full w-full flex-col bg-background relative overflow-hidden screen-enter">
@@ -101,72 +67,18 @@ export function RoomScreen({
         </button>
       </header>
 
-      <div 
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto p-3 sm:p-4 pb-20 flex flex-col gap-3"
-      >
-        {notice && (
-          <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-bold text-muted-foreground shadow-sm">
-            <AlertCircle className="h-4 w-4 text-primary" />
-            <span>{notice}</span>
-          </div>
-        )}
-
-        {messages.length === 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+      <MessageList
+        messages={messages}
+        guestId={guestId}
+        notice={notice}
+        emptyState={
+          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50 mt-10">
             <Users className="w-16 h-16 mb-4 text-muted-foreground" />
             <p className="text-lg font-bold text-foreground">لا توجد رسائل بعد</p>
             <p className="text-sm text-muted-foreground">كن أول من يرحب بالجميع!</p>
           </div>
-        )}
-
-        {messages.map((msg) => {
-          // Detect system messages via prefix
-          if (msg.body.startsWith("$$SYSTEM$$")) {
-            const systemText = msg.body.replace("$$SYSTEM$$", "");
-            return (
-              <div key={msg.id} className="flex flex-col items-center justify-center my-2 animate-in fade-in duration-700">
-                <div className="bg-muted/50 border border-border/50 rounded-2xl px-6 py-2 max-w-[90%] text-center shadow-xs">
-                  <p className="text-[11px] sm:text-xs font-bold text-foreground">
-                    {systemText}
-                  </p>
-                </div>
-              </div>
-            );
-          }
-
-          const isMine = msg.sender_id === guestId;
-          const profile = msg.profiles;
-          
-          return (
-            <div key={msg.id} className={`flex flex-col w-full ${isMine ? "items-end" : "items-start"}`}>
-              {!isMine && profile && (
-                <span className="text-xs font-bold text-muted-foreground mb-1 ml-2 mr-2">
-                  {profile.name}
-                </span>
-              )}
-              <div
-                className={`group relative max-w-[90%] px-3.5 py-2 text-xs leading-relaxed sm:max-w-[80%] sm:text-sm shadow-xs
-                  ${isMine ? "bubble-mine" : "bubble-theirs"}
-                `}
-              >
-                <div className="whitespace-pre-wrap wrap-break-word">{renderMessageContent(msg)}</div>
-                <div
-                  className={`mt-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest opacity-60 ${
-                    isMine ? "justify-end text-white" : "justify-start text-muted-foreground"
-                  }`}
-                  suppressHydrationWarning
-                >
-                  {new Date(msg.created_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        }
+      />
 
       <MessageInput
         messageText={messageText}

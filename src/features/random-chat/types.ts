@@ -56,3 +56,5 @@ export interface PrivateConversation {
   unreadCount: number;
   peer?: Profile;
 }
+
+export type UnifiedMessage = Message | RoomMessage | PrivateMessage;

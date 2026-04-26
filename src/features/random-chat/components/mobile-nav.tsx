@@ -21,8 +21,8 @@ export function MobileNav() {
 
   return (
     <>
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 p-4 pb-[calc(env(safe-area-inset-bottom,0)+1rem)]">
-        <div className="mx-auto flex max-w-sm items-center justify-around rounded-2xl bg-card/80 backdrop-blur-xl p-2 shadow-xl border border-border/50">
+      <div className="mobile-nav-container lg:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pt-2 pb-[calc(env(safe-area-inset-bottom,0)+0.5rem)]">
+        <div className="mx-auto flex max-w-sm items-center justify-around rounded-2xl bg-card/80 backdrop-blur-xl p-1.5 shadow-xl border border-border/50">
           
           <Link 
             href="/"

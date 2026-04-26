@@ -12,6 +12,7 @@ export function VoiceRecorder({ onSend }: VoiceRecorderProps) {
   const [isSupported, setIsSupported] = useState(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsSupported(!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
   }, []);
   const [isRecording, setIsRecording] = useState(false);
