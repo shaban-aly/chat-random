@@ -11,11 +11,7 @@ export default function ChatLayout({
 }) {
   const pathname = usePathname();
 
-  // Logic to determine if nav should be shown
-  // We show nav only on main directory pages, not inside an active chat session
-  // But wait, in a multi-page app, we usually want the nav always visible unless it's a full-screen mode
-  // The user wants features in pages, so let's keep nav visible on /, /rooms
-  // And hide it when inside /rooms/[id] or /private/[id] if we want a clean chat experience
+  
   
   const isInsideChat = pathname.startsWith("/rooms/") || pathname.startsWith("/private/");
   const showNav = !isInsideChat;
