@@ -12,8 +12,8 @@ interface HomeScreenProps {
 
 export function HomeScreen({ onStart, onOpenConversations, guestId, isEnded = false }: HomeScreenProps) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-6 text-center screen-enter">
-      <div className="max-w-md w-full space-y-10">
+    <div className="flex flex-1 flex-col items-center p-6 pt-10 pb-20 text-center screen-enter overflow-y-auto min-h-full">
+      <div className="max-w-md w-full space-y-10 py-4 my-auto">
         {/* Main Icon */}
         <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-[2.5rem] bg-card shadow-2xl shadow-primary/5 text-primary/80 relative">
           <div className="absolute inset-0 rounded-[2.5rem] bg-linear-to-br from-primary/20 to-transparent opacity-50" />

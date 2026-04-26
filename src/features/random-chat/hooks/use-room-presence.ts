@@ -12,13 +12,8 @@ export function useRoomPresence(roomId: string | null, profile: Profile | null) 
       return;
     }
 
-    const channel = supabase.channel(`room:${roomId}`, {
-      config: {
-        presence: {
-          key: profile.guest_id,
-        },
-      },
-    });
+    const channel = supabase.channel(`room:${roomId}`);
+    const globalChannel = supabase.channel("global-presence");
 
     channel
       .on("presence", { event: "sync" }, () => {
@@ -26,8 +21,6 @@ export function useRoomPresence(roomId: string | null, profile: Profile | null) 
         const users: Profile[] = [];
         
         for (const id in state) {
-          // Presence state can have multiple presences for the same key if the user has multiple tabs open
-          // We take the first one
           if (state[id] && state[id].length > 0) {
             users.push(state[id][0] as unknown as Profile);
           }
@@ -41,8 +34,15 @@ export function useRoomPresence(roomId: string | null, profile: Profile | null) 
         }
       });
 
+    globalChannel.subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        await globalChannel.track({ ...profile, roomId });
+      }
+    });
+
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(globalChannel);
     };
   }, [roomId, profile]);
 

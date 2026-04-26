@@ -23,8 +23,8 @@ export default function ChatLayout({
 
       {/* Main Screen Area */}
       <main
-        className={`flex-1 flex flex-col overflow-auto hide-scrollbar relative lg:pb-0
-          ${showNav ? "pb-[80px]" : "pb-0"}
+        className={`flex-1 flex flex-col overflow-y-auto hide-scrollbar relative lg:pb-0
+        ${showNav ? "pb-[100px]" : "pb-0"}
         `}
       >
         {children}

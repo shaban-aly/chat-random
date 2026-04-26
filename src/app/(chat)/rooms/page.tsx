@@ -11,7 +11,7 @@ export default function RoomsPage() {
 
   return (
     <>
-      <RoomsDirectoryScreen onSelectRoom={rooms.enterRoom} />
+      <RoomsDirectoryScreen onSelectRoom={rooms.enterRoom} guestId={guestId} />
       
       {rooms.pendingRoom && (
         <JoinRoomModal

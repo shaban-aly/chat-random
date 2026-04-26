@@ -1,10 +1,11 @@
 "use client";
 
-import { MessageCircle, Search, ShieldCheck, Mail } from "lucide-react";
+import { MessageCircle, Search, ShieldCheck, Mail, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePrivateConversations } from "../hooks/use-private-conversations";
 import { useRandomChat } from "../use-random-chat";
+import { profileService } from "../services/profile-service";
 
 interface AppSidebarProps {
   className?: string;
@@ -19,6 +20,20 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
 
   const { guestId } = useRandomChat();
   const { totalUnreadCount } = usePrivateConversations(guestId);
+
+  const handleLogout = async () => {
+    if (!guestId) return;
+    if (confirm("هل أنت متأكد من حذف حسابك؟ سيتم مسح كافة الرسائل والمحادثات.")) {
+      try {
+        await profileService.deleteProfile(guestId);
+      } catch (err) {
+        console.error("Logout DB error:", err);
+      }
+      localStorage.removeItem("random-chat-guest-id");
+      localStorage.removeItem("random-chat-profile");
+      window.location.replace("/");
+    }
+  };
 
   return (
     <aside className={`flex-col border-e border-border w-[400px] shrink-0 bg-card ${className}`}>
@@ -41,7 +56,6 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
         </div>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-8 lg:px-10 py-6 space-y-2">
         <Link 
           href="/"
@@ -81,8 +95,14 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
         </Link>
       </nav>
 
-      {/* Footer */}
-      <div className="p-8 lg:p-10 border-t border-border/50">
+      <div className="p-8 lg:p-10 border-t border-border/50 space-y-4">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 text-destructive hover:text-destructive/80 transition-colors font-bold w-full"
+        >
+          <LogOut size={20} />
+          <span>حذف الحساب وخروج</span>
+        </button>
         <div className="flex items-center gap-3 text-muted-foreground text-sm font-medium">
           <ShieldCheck size={20} className="text-emerald-500" />
           <span>اتصال مشفر وآمن</span>
