@@ -5,7 +5,7 @@ export type Message = {
   conversation_id: string;
   sender_id: string;
   body: string;
-  message_type: "text" | "audio";
+  message_type: "text" | "audio" | "system";
   media_url?: string;
   created_at: string;
 };
@@ -31,7 +31,7 @@ export type RoomMessage = {
   room_id: string;
   sender_id: string;
   body: string;
-  message_type: "text" | "audio";
+  message_type: "text" | "audio" | "system";
   media_url?: string;
   created_at: string;
   // This is a joined field we will fetch alongside the message
@@ -43,7 +43,7 @@ export type PrivateMessage = {
   sender_id: string;
   receiver_id: string;
   body: string;
-  message_type: "text" | "audio";
+  message_type: "text" | "audio" | "system";
   media_url?: string;
   created_at: string;
   read: boolean;

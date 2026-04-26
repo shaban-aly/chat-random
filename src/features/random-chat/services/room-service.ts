@@ -21,7 +21,7 @@ export const roomService = {
     return (data || []).reverse() as RoomMessage[];
   },
 
-  async sendMessage(roomId: string, senderId: string, body: string, messageType: "text" | "audio" = "text", mediaUrl?: string) {
+  async sendMessage(roomId: string, senderId: string, body: string, messageType: "text" | "audio" | "system" = "text", mediaUrl?: string) {
     const { error } = await supabase.from("room_messages").insert({
       room_id: roomId,
       sender_id: senderId,
