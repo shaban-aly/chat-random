@@ -3,6 +3,7 @@
 import { Users, Globe2, MapPin } from "lucide-react";
 import { ROOM_CATEGORIES } from "../constants";
 import { useGlobalPresence } from "../hooks/use-global-presence";
+import { AdUnit } from "@/components/ad-unit";
 
 interface RoomsDirectoryScreenProps {
   onSelectRoom: (roomId: string, roomName: string) => void;
@@ -21,6 +22,11 @@ export function RoomsDirectoryScreen({ onSelectRoom, guestId }: RoomsDirectorySc
       </div>
 
       <div className="flex-1 overflow-auto p-4 lg:p-6 pb-12">
+        {/* Ad Unit 3 (Rooms Directory Ad) */}
+        <div className="max-w-5xl mx-auto mb-6">
+          <AdUnit src="//untimely-hello.com/b.X/Vhs/dmGWlt0sY/WQcv/ZeCm_9vufZtUll/kHPoTkYn5AOaToEa4NOfTac/t/NEj_kF5SMgTBkLw/MxQz" />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
           {ROOM_CATEGORIES.map((category, idx) => (
             <div key={category.title} className="space-y-3">

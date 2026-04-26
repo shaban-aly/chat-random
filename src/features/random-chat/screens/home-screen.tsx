@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Play, ShieldCheck, CheckCircle2, MessageSquare } from "lucide-react";
+import { AdUnit } from "@/components/ad-unit";
 
 interface HomeScreenProps {
   onStart: () => void;
@@ -75,6 +76,11 @@ export function HomeScreen({ onStart, onOpenConversations, guestId, isEnded = fa
               </div>
             </div>
           )}
+        </div>
+
+        {/* Ad Unit 2 (Home Ad) */}
+        <div className="pt-2">
+          <AdUnit src="//untimely-hello.com/bTXfVOsUd.Gql/0/YHWlcs/leamS9duTZQUPlBkHP/TTYQ5/OrTbE/4/OiDoEStpNZjRkJ5fMYTqg/4/N/QJ" />
         </div>
 
         {/* Guest ID */}

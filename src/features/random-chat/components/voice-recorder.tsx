@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Mic, Square, Trash2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -9,10 +9,11 @@ interface VoiceRecorderProps {
 }
 
 export function VoiceRecorder({ onSend }: VoiceRecorderProps) {
-  const [isSupported] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-  });
+  const [isSupported, setIsSupported] = useState(true);
+
+  useEffect(() => {
+    setIsSupported(!!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+  }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);

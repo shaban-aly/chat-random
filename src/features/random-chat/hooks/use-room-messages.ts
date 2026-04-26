@@ -15,16 +15,16 @@ export function useRoomMessages(roomId: string | null, guestId: string) {
   }, []);
 
   const sendMessage = useCallback(
-    async (text: string, type: "text" | "system" = "text") => {
+    async (text: string) => {
       const body = text.trim();
       if (!body || !roomId) return;
 
-      if (type === "text") setMessageText("");
+      setMessageText("");
 
       try {
-        await roomService.sendMessage(roomId, guestId, body, type);
+        await roomService.sendMessage(roomId, guestId, body);
       } catch {
-        if (type === "text") setMessageText(body);
+        setMessageText(body);
         setNotice("لم يتم إرسال الرسالة. حاول مرة أخرى.");
       }
     },

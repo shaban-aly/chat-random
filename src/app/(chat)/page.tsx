@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRandomChat } from "@/features/random-chat/use-random-chat";
 import { HomeScreen } from "@/features/random-chat/screens/home-screen";
 import { SearchingScreen } from "@/features/random-chat/screens/searching-screen";
@@ -12,8 +12,15 @@ import { usePrivateMessages } from "@/features/random-chat/hooks/use-private-mes
 export default function RandomChatPage() {
   const chat = useRandomChat();
   const [selectedPeerId, setSelectedPeerId] = useState<string | null>(null);
+  const [searchCount, setSearchCount] = useState(0);
 
   const privateChat = usePrivateMessages(chat.guestId, selectedPeerId);
+
+  useEffect(() => {
+    if (chat.status === "searching") {
+      setSearchCount((c) => c + 1);
+    }
+  }, [chat.status]);
 
   const screen = {
     idle: (
@@ -31,7 +38,7 @@ export default function RandomChatPage() {
         onOpenConversations={() => chat.setStatus("conversations")}
       />
     ),
-    searching: <SearchingScreen onCancel={chat.cancelSearch} />,
+    searching: <SearchingScreen onCancel={chat.cancelSearch} searchCount={searchCount} />,
     chatting: (
       <ChatScreen
         guestId={chat.guestId}

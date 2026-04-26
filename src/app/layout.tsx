@@ -9,6 +9,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://chat-random-pro.vercel.app"),
+  referrer: "no-referrer-when-downgrade",
   verification: {
     google: "FMr8sUXgVcowY_lb9BZb50geQ-OKRsxc8E2NRpjwl_w",
   },
@@ -73,6 +74,7 @@ export const viewport = {
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { AdUnit } from "@/components/ad-unit";
 
 export default function RootLayout({
   children,
@@ -112,6 +114,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider defaultTheme="system">
           {children}
+          {/* Global Ad Unit (Code 1) */}
+          <div className="fixed bottom-0 pointer-events-none opacity-0 w-0 h-0 overflow-hidden">
+            <AdUnit src="//untimely-hello.com/b/X.VIssdlGHlh0IYTWicW/Ve/mF9VuIZ/U/l/kvPIT_Y/5UOFTAEf4ZNHjbkNtsN/jJkt5CM/T/gd3oM/wG" />
+          </div>
         </ThemeProvider>
       </body>
     </html>

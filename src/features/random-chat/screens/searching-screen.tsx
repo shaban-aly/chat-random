@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, XCircle } from "lucide-react";
+import { AdUnit } from "@/components/ad-unit";
 
 interface SearchingScreenProps {
   onCancel: () => void;
+  searchCount: number;
 }
 
-export function SearchingScreen({ onCancel }: SearchingScreenProps) {
+export function SearchingScreen({ onCancel, searchCount }: SearchingScreenProps) {
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
@@ -60,6 +62,13 @@ export function SearchingScreen({ onCancel }: SearchingScreenProps) {
             إلغاء البحث
           </Button>
         </div>
+
+        {/* Dynamic Ad Unit for users searching more than once */}
+        {searchCount > 1 && (
+          <div className="w-full pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <AdUnit src="//untimely-hello.com/bTXfVOsUd.Gql/0/YHWlcs/leamS9duTZQUPlBkHP/TTYQ5/OrTbE/4/OiDoEStpNZjRkJ5fMYTqg/4/N/QJ" />
+          </div>
+        )}
       </div>
     </div>
   );

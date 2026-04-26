@@ -5,6 +5,7 @@ import { useRoomMessages } from "./use-room-messages";
 import { useRoomPresence } from "./use-room-presence";
 import { usePrivateMessages } from "./use-private-messages";
 import { profileService } from "../services/profile-service";
+import { roomService } from "../services/room-service";
 
 const PROFILE_STORAGE_KEY = "random-chat-profile";
 
@@ -80,6 +81,10 @@ export function useRooms(guestId: string) {
         return;
       }
       setCurrentRoomName(roomName);
+      
+      // Send a system join message before routing (using text type with a prefix to avoid DB constraints)
+      roomService.sendMessage(roomId, guestId, `$$SYSTEM$$انضم ${profile.name} إلى الغرفة 👋`, "text").catch(console.error);
+      
       router.push(`/rooms/${roomId}`);
     },
     [profile, router]
@@ -94,6 +99,10 @@ export function useRooms(guestId: string) {
         setCurrentRoomName(pendingRoom.name);
         const targetRoom = pendingRoom.id;
         setPendingRoom(null);
+        
+        // Send a system join message before routing
+        roomService.sendMessage(targetRoom, guestId, `$$SYSTEM$$انضم ${fullProfile.name} إلى الغرفة 👋`, "text").catch(console.error);
+        
         router.push(`/rooms/${targetRoom}`);
       }
     },

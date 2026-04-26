@@ -105,13 +105,30 @@ export function RoomScreen({
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-3 sm:p-4 pb-20 flex flex-col gap-3"
       >
+        {notice && (
+          <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-bold text-muted-foreground shadow-sm">
+            <AlertCircle className="h-4 w-4 text-primary" />
+            <span>{notice}</span>
+          </div>
+        )}
+
+        {messages.length === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+            <Users className="w-16 h-16 mb-4 text-muted-foreground" />
+            <p className="text-lg font-bold text-foreground">لا توجد رسائل بعد</p>
+            <p className="text-sm text-muted-foreground">كن أول من يرحب بالجميع!</p>
+          </div>
+        )}
+
         {messages.map((msg) => {
-          if (msg.message_type === "system") {
+          // Detect system messages via prefix
+          if (msg.body.startsWith("$$SYSTEM$$")) {
+            const systemText = msg.body.replace("$$SYSTEM$$", "");
             return (
               <div key={msg.id} className="flex flex-col items-center justify-center my-2 animate-in fade-in duration-700">
                 <div className="bg-muted/50 border border-border/50 rounded-2xl px-6 py-2 max-w-[90%] text-center shadow-xs">
                   <p className="text-[11px] sm:text-xs font-bold text-foreground">
-                    {msg.body}
+                    {systemText}
                   </p>
                 </div>
               </div>
