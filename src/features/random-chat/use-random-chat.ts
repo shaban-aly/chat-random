@@ -20,6 +20,7 @@ export function useRandomChat() {
   const [guestId, setGuestId] = useState("");
   const [status, setStatus] = useState<ChatStatus>("idle");
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [peerId, setPeerId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
 
   const {
@@ -70,11 +71,32 @@ export function useRandomChat() {
       if (data && data.id) {
         setConversationId(data.id);
         setStatus("chatting");
+        
+        // Fetch peerId
+        const details = await chatService.getConversationDetails(data.id);
+        if (details) {
+          setPeerId(details.guest_a === id ? details.guest_b : details.guest_a);
+        }
       }
     };
 
     checkActiveConversation(nextGuestId);
   }, [setConversationId, setStatus]);
+
+  // When conversationId changes while chatting, fetch peerId
+  useEffect(() => {
+    if (conversationId && status === "chatting") {
+      chatService.getConversationDetails(conversationId).then(details => {
+        if (details) {
+           
+          setPeerId(details.guest_a === guestId ? details.guest_b : details.guest_a);
+        }
+      });
+    } else if (!conversationId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPeerId(null);
+    }
+  }, [conversationId, status, guestId]);
 
   const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -102,5 +124,6 @@ export function useRandomChat() {
     statusLabel,
     isGuestTyping,
     setStatus,
+    peerId,
   };
 }

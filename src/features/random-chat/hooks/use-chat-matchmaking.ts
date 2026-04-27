@@ -1,6 +1,7 @@
 import { useCallback, useRef } from "react";
 import { ChatStatus } from "../types";
 import { chatService } from "../services/chat-service";
+import { blockService } from "../services/block-service";
 
 const pollIntervalMs = 2200;
 
@@ -27,6 +28,17 @@ export function useChatMatchmaking(
       const match = await chatService.startRandomChat(guestId);
 
       if (match?.conversation_id) {
+        const details = await chatService.getConversationDetails(match.conversation_id);
+        const peerId = details?.guest_a === guestId ? details?.guest_b : details?.guest_a;
+        
+        if (peerId && blockService.isBlocked(peerId)) {
+          // If the matched user is blocked, end this conversation and keep searching
+          await chatService.endConversation(match.conversation_id);
+          // Set ourselves back to waiting
+          await chatService.addToWaitingQueue(guestId).catch(() => {});
+          return; // Skip the rest, we are still polling
+        }
+
         stopPolling();
         setConversationId(match.conversation_id);
         setStatus("chatting");

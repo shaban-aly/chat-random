@@ -10,10 +10,13 @@ interface MessageListProps {
   guestId: string;
   notice?: string;
   isGuestTyping?: boolean;
+  roomTypingUsers?: Record<string, string>;
   emptyState?: ReactNode;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
 }
 
-export function MessageList({ messages, guestId, notice, isGuestTyping, emptyState }: MessageListProps) {
+export function MessageList({ messages, guestId, notice, isGuestTyping, roomTypingUsers = {}, emptyState, onLoadMore, hasMore }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -23,7 +26,7 @@ export function MessageList({ messages, guestId, notice, isGuestTyping, emptySta
         behavior: "smooth",
       });
     }
-  }, [messages.length, isGuestTyping]);
+  }, [messages.length, isGuestTyping, roomTypingUsers]);
 
   return (
     <div
@@ -35,6 +38,15 @@ export function MessageList({ messages, guestId, notice, isGuestTyping, emptySta
           <Info size={14} className="text-primary" />
           <span>{notice}</span>
         </div>
+      )}
+
+      {hasMore && onLoadMore && messages.length >= 50 && (
+        <button
+          onClick={onLoadMore}
+          className="mx-auto text-xs font-black text-primary/60 hover:text-primary transition-colors py-2 px-4 rounded-full border border-primary/10 hover:bg-primary/5 mb-4"
+        >
+          تحميل المزيد من الرسائل القديمة
+        </button>
       )}
 
       {messages.length === 0 && (
@@ -72,6 +84,21 @@ export function MessageList({ messages, guestId, notice, isGuestTyping, emptySta
           </div>
         </div>
       )}
+
+      {Object.entries(roomTypingUsers)
+        .filter(([id]) => id !== guestId)
+        .map(([id, name]) => (
+          <div key={id} className="flex w-full justify-start">
+            <div className="group relative max-w-[90%] px-3.5 py-3 text-xs leading-relaxed sm:max-w-[75%] sm:text-sm shadow-sm bubble-theirs">
+              <span className="block text-[10px] font-black text-primary mb-1">{name}</span>
+              <div className="flex items-center gap-1.5 h-6">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }}></div>
+              </div>
+            </div>
+          </div>
+        ))}
     </div>
   );
 }

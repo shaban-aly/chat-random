@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import { RealtimeChannel } from "@supabase/supabase-js";
 import { PrivateMessage, Profile } from "../types";
 import { privateService } from "../services/private-service";
 import { profileService } from "../services/profile-service";
 import { mediaService } from "../services/media-service";
+import { notificationService } from "../services/notification-service";
 
 export function usePrivateMessages(guestId: string, peerId: string | null) {
   const [messages, setMessages] = useState<PrivateMessage[]>([]);
   const [messageText, setMessageText] = useState("");
   const [peerProfile, setPeerProfile] = useState<Profile | null>(null);
+  const [isPeerTyping, setIsPeerTyping] = useState(false);
   const prevMessagesLength = useRef(0);
+  const channelRef = useRef<RealtimeChannel | null>(null);
 
   // Play sound when receiving a new message from the other person
   useEffect(() => {
@@ -20,10 +24,18 @@ export function usePrivateMessages(guestId: string, peerId: string | null) {
           const audio = new Audio("/sounds/notification.mp3");
           audio.play().catch(() => {});
         } catch { /* ignore */ }
+
+        // Browser Notification
+        if (document.visibilityState === "hidden" && peerProfile) {
+          notificationService.show(
+            `رسالة جديدة من ${peerProfile.name}`,
+            lastMessage.message_type === "text" ? lastMessage.body : "أرسل لك رسالة صوتية"
+          );
+        }
       }
     }
     prevMessagesLength.current = messages.length;
-  }, [messages, peerId]);
+  }, [messages, peerId, peerProfile]);
 
   // Fetch peer profile
   useEffect(() => {
@@ -73,6 +85,19 @@ export function usePrivateMessages(guestId: string, peerId: string | null) {
         }
       } catch {
         console.error("Failed to send private audio message");
+      }
+    },
+    [guestId, peerId]
+  );
+
+  const sendTyping = useCallback(
+    (isTyping: boolean) => {
+      if (channelRef.current && peerId) {
+        channelRef.current.send({
+          type: "broadcast",
+          event: "typing",
+          payload: { guestId, isTyping },
+        });
       }
     },
     [guestId, peerId]
@@ -129,7 +154,16 @@ export function usePrivateMessages(guestId: string, peerId: string | null) {
           }
         }
       )
-      .subscribe();
+      .on("broadcast", { event: "typing" }, ({ payload }) => {
+        if (payload.guestId === peerId) {
+          setIsPeerTyping(payload.isTyping);
+        }
+      })
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          channelRef.current = messageChannel;
+        }
+      });
 
     return () => {
       supabase.removeChannel(messageChannel);
@@ -141,7 +175,9 @@ export function usePrivateMessages(guestId: string, peerId: string | null) {
     messageText,
     setMessageText,
     sendMessage,
+    sendTyping,
     sendAudioMessage,
     peerProfile,
+    isPeerTyping,
   };
 }

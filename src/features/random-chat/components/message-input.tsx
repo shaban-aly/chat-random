@@ -4,6 +4,7 @@ import { FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VoiceRecorder } from "./voice-recorder";
+import { EmojiPicker } from "./emoji-picker";
 import { Profile } from "../types";
 import { Send } from "lucide-react";
 
@@ -67,14 +68,17 @@ export function MessageInput({
             placeholder="اكتب رسالتك هنا..."
             value={messageText}
           />
-          <Button
-            className="absolute left-1.5 top-1.5 h-11 w-11 rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all sm:h-13 sm:w-13 sm:left-2 sm:top-1.5"
-            disabled={disabled || !messageText.trim()}
-            type="submit"
-            size="icon"
-          >
-            <Send size={18} className="sm:size-5" />
-          </Button>
+          <div className="absolute left-1.5 top-1.5 flex gap-1 sm:left-2 sm:top-1.5">
+            <EmojiPicker onSelect={(emoji) => onMessageChange(messageText + emoji)} />
+            <Button
+              className="h-11 w-11 rounded-xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all sm:h-13 sm:w-13"
+              disabled={disabled || !messageText.trim()}
+              type="submit"
+              size="icon"
+            >
+              <Send size={18} className="sm:size-5" />
+            </Button>
+          </div>
         </div>
       </form>
     </div>

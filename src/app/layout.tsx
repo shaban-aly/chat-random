@@ -75,6 +75,8 @@ export const viewport = {
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { AdUnit } from "@/components/ad-unit";
+import { Onboarding } from "@/features/random-chat/components/onboarding";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -110,15 +112,34 @@ export default function RootLayout({
             `,
           }}
         />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#6366f1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider defaultTheme="system">
+          <Onboarding />
           {children}
           {/* Global Ad Unit (Code 1) */}
           <div className="fixed bottom-0 pointer-events-none opacity-0 w-0 h-0 overflow-hidden">
             <AdUnit src="//untimely-hello.com/b/X.VIssdlGHlh0IYTWicW/Ve/mF9VuIZ/U/l/kvPIT_Y/5UOFTAEf4ZNHjbkNtsN/jJkt5CM/T/gd3oM/wG" />
           </div>
         </ThemeProvider>
+        <Script
+          id="sw-register"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

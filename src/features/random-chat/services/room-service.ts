@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { RoomMessage } from "../types";
 
 export const roomService = {
-  async getMessages(roomId: string, limit: number = 50): Promise<RoomMessage[]> {
+  async getMessages(roomId: string, limit: number = 50, offset: number = 0): Promise<RoomMessage[]> {
     const { data, error } = await supabase
       .from("room_messages")
       .select(`
@@ -11,14 +11,15 @@ export const roomService = {
       `)
       .eq("room_id", roomId)
       .order("created_at", { ascending: false })
-      .limit(limit);
+      .range(offset, offset + limit - 1);
 
     if (error) {
       console.error("Error loading room messages:", error);
       return [];
     }
 
-    return (data || []).reverse() as RoomMessage[];
+    // Keep it descending for pagination logic in UI or reverse if needed
+    return (data || []) as RoomMessage[];
   },
 
   async sendMessage(roomId: string, senderId: string, body: string, messageType: "text" | "audio" = "text", mediaUrl?: string) {

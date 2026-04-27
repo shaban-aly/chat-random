@@ -18,6 +18,20 @@ export const chatService = {
     return data;
   },
 
+  async getConversationDetails(conversationId: string) {
+    const { data, error } = await supabase
+      .from("conversations")
+      .select("guest_a, guest_b")
+      .eq("id", conversationId)
+      .maybeSingle();
+      
+    if (error) {
+      console.error("Error getting conversation details:", error);
+      return null;
+    }
+    return data;
+  },
+
   async loadMessages(conversationId: string): Promise<Message[]> {
     const { data, error } = await supabase
       .from("messages")
@@ -113,5 +127,20 @@ export const chatService = {
       .delete()
       .eq("id", conversationId);
     if (error) throw error;
+  },
+
+  async getOnlineCount() {
+    // Count people in queue + small random number for realism
+    const { count, error } = await supabase
+      .from("random_queue")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "waiting");
+
+    if (error) return 0;
+    
+    // Base count + some active conversations (approximate)
+    // We'll multiply by a factor or add a base number to represent total app activity
+    const estimatedTotal = (count || 0) * 3 + 42; 
+    return estimatedTotal;
   },
 };

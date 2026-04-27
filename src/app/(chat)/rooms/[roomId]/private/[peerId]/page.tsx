@@ -38,6 +38,7 @@ export default function RoomPrivateChatPage() {
         onSendMessage={rooms.handleSendPrivateMessage}
         onSendAudio={rooms.sendPrivateAudio}
         onClose={rooms.closePrivateChat}
+        isPeerTyping={rooms.isPrivateTyping}
       />
     );
   }

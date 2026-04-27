@@ -51,6 +51,7 @@ export default function RandomChatPage() {
         onSendMessage={chat.sendMessage}
         onSendAudio={chat.sendAudioMessage}
         onEndChat={chat.endChat}
+        peerId={chat.peerId || undefined}
       />
     ),
     conversations: selectedPeerId ? (

@@ -1,15 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { LogOut, User, ArrowRight } from "lucide-react";
+import { LogOut, User, ArrowRight, ShieldAlert } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface ChatHeaderProps {
   statusLabel: string;
   onEndChat: () => void;
+  onReport?: () => void;
 }
 
-export function ChatHeader({ statusLabel, onEndChat }: ChatHeaderProps) {
+export function ChatHeader({ statusLabel, onEndChat, onReport }: ChatHeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-border/50 bg-background/80 px-4 backdrop-blur-md sm:h-20 sm:px-8">
       <div className="flex items-center gap-3 sm:gap-4">
@@ -39,16 +40,27 @@ export function ChatHeader({ statusLabel, onEndChat }: ChatHeaderProps) {
         </div>
       </div>
 
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={onEndChat}
-        className="h-9 rounded-full border border-destructive/20 bg-destructive/5 px-3 text-destructive hover:bg-destructive hover:text-white sm:h-10 sm:px-5 transition-all"
-      >
-        <LogOut size={16} className="sm:ml-2" />
-        <span className="hidden sm:inline">إنهاء الدردشة</span>
-        <span className="sm:hidden">إنهاء</span>
-      </Button>
+      <div className="flex items-center gap-2">
+        {onReport && (
+          <button
+            onClick={onReport}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+            title="إبلاغ عن المستخدم"
+          >
+            <ShieldAlert size={18} />
+          </button>
+        )}
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onEndChat}
+          className="h-9 rounded-full border border-destructive/20 bg-destructive/5 px-3 text-destructive hover:bg-destructive hover:text-white sm:h-10 sm:px-5 transition-all"
+        >
+          <LogOut size={16} className="sm:ml-2" />
+          <span className="hidden sm:inline">إنهاء الدردشة</span>
+          <span className="sm:hidden">إنهاء</span>
+        </Button>
+      </div>
     </header>
   );
 }

@@ -42,6 +42,10 @@ export function useRooms(guestId: string) {
     setMessageText: setRoomMessageText, 
     sendMessage: sendRoomMsg, 
     sendAudioMessage: sendRoomAudio,
+    sendTyping: sendRoomTyping,
+    typingUsers: roomTypingUsers,
+    loadMore: loadRoomMore,
+    hasMore: roomHasMore,
     notice: roomNotice 
   } = useRoomMessages(roomIdFromUrl ?? null, guestId);
 
@@ -53,6 +57,8 @@ export function useRooms(guestId: string) {
     setMessageText: setPrivateMessageText, 
     sendMessage: sendPrivateMsg, 
     sendAudioMessage: sendPrivateAudio,
+    sendTyping: sendPrivateTyping,
+    isPeerTyping: isPrivateTyping,
     peerProfile 
   } = usePrivateMessages(guestId, peerIdFromUrl ?? selectedPeer?.guest_id ?? null);
 
@@ -82,7 +88,7 @@ export function useRooms(guestId: string) {
       }
       setCurrentRoomName(roomName);
       
-      // Send a system join message before routing (using text type with a prefix to avoid DB constraints)
+      // Send a system join message before routing
       roomService.sendMessage(roomId, guestId, `$$SYSTEM$$انضم ${profile.name} إلى الغرفة 👋`, "text").catch(console.error);
       
       router.push(`/rooms/${roomId}`);
@@ -133,22 +139,38 @@ export function useRooms(guestId: string) {
     }
   }, [roomIdFromUrl, router]);
 
-  // Send room message (form handler)
+  const handleRoomMessageChange = useCallback(
+    (text: string) => {
+      setRoomMessageText(text);
+      sendRoomTyping(text.length > 0, profile?.name);
+    },
+    [setRoomMessageText, sendRoomTyping, profile]
+  );
+
   const handleSendRoomMessage = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       sendRoomMsg(roomMessageText);
+      sendRoomTyping(false, profile?.name);
     },
-    [sendRoomMsg, roomMessageText]
+    [sendRoomMsg, roomMessageText, sendRoomTyping, profile]
   );
 
-  // Send private message (form handler)
+  const handlePrivateMessageChange = useCallback(
+    (text: string) => {
+      setPrivateMessageText(text);
+      sendPrivateTyping(text.length > 0);
+    },
+    [setPrivateMessageText, sendPrivateTyping]
+  );
+
   const handleSendPrivateMessage = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       sendPrivateMsg(privateMessageText);
+      sendPrivateTyping(false);
     },
-    [sendPrivateMsg, privateMessageText]
+    [sendPrivateMsg, privateMessageText, sendPrivateTyping]
   );
 
   return {
@@ -161,11 +183,11 @@ export function useRooms(guestId: string) {
     roomMessages,
     roomMessageText,
     roomNotice,
-    setRoomMessageText,
+    setRoomMessageText: handleRoomMessageChange,
     sendRoomAudio,
     privateMessages,
     privateMessageText,
-    setPrivateMessageText,
+    setPrivateMessageText: handlePrivateMessageChange,
     sendPrivateAudio,
     enterRoom,
     handleJoinWithProfile,
@@ -174,5 +196,9 @@ export function useRooms(guestId: string) {
     closePrivateChat,
     handleSendRoomMessage,
     handleSendPrivateMessage,
+    isPrivateTyping,
+    roomTypingUsers,
+    loadRoomMore,
+    roomHasMore,
   };
 }

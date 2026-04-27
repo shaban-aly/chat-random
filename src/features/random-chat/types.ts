@@ -46,7 +46,6 @@ export type PrivateMessage = {
   message_type: "text" | "audio";
   media_url?: string;
   created_at: string;
-  read: boolean;
   is_read: boolean;
 };
 

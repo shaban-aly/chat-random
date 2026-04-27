@@ -1,10 +1,12 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { ChevronRight, ShieldAlert } from "lucide-react";
 import { Profile, PrivateMessage } from "../types";
 import { MessageInput } from "../components/message-input";
 import { MessageList } from "../components/message-list";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ReportModal } from "../components/report-modal";
 
 interface PrivateChatScreenProps {
   guestId: string;
@@ -15,6 +17,7 @@ interface PrivateChatScreenProps {
   onSendMessage: (e: React.FormEvent<HTMLFormElement>) => void;
   onSendAudio?: (blob: Blob) => void;
   onClose: () => void;
+  isPeerTyping?: boolean;
 }
 
 export function PrivateChatScreen({
@@ -26,7 +29,9 @@ export function PrivateChatScreen({
   onSendMessage,
   onSendAudio,
   onClose,
+  isPeerTyping = false,
 }: PrivateChatScreenProps) {
+  const [isReportOpen, setIsReportOpen] = useState(false);
 
   return (
     <div className="flex h-full w-full flex-col bg-background relative overflow-hidden screen-enter">
@@ -48,18 +53,28 @@ export function PrivateChatScreen({
         `}>
           {peer.name.charAt(0)}
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-base font-black text-foreground">{peer.name}</h2>
           <p className="text-xs text-muted-foreground">
             {peer.age} سنة • {peer.gender === "male" ? "ذكر" : "أنثى"} • خاص
           </p>
         </div>
+
+        {/* Report button */}
+        <button
+          onClick={() => setIsReportOpen(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+          title="إبلاغ عن المستخدم"
+        >
+          <ShieldAlert size={18} />
+        </button>
       </header>
 
       {/* Messages */}
       <MessageList
         messages={messages}
         guestId={guestId}
+        isGuestTyping={isPeerTyping}
         emptyState={
           <div className="flex-1 flex flex-col items-center justify-center text-center opacity-50 mt-20">
             <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-3xl mb-4
@@ -78,6 +93,14 @@ export function PrivateChatScreen({
         onMessageChange={onMessageChange}
         onSendMessage={onSendMessage}
         onSendAudio={onSendAudio}
+      />
+
+      <ReportModal
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+        reporterId={guestId}
+        reportedId={peer.guest_id}
+        reportedName={peer.name}
       />
     </div>
   );
